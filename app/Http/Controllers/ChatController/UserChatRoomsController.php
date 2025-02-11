@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\AuthController;
+namespace App\Http\Controllers\ChatController;
 
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
 use App\Models\Auth\UserChatRooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Http\Request\Chat\ApiGoogleLoginRequest;
+
+
 
 Class UserChatRoomsController extends Controller{
 
@@ -25,7 +28,7 @@ Class UserChatRoomsController extends Controller{
         return UserChatRoomsResource::collection($data);
     }
 
-    public function store(UserChatRoomsRequest $request)
+    public function store(ApiUserChatRoomsRequest $request)
     {
 
         $response = $this->repo->saveData($request);
@@ -34,7 +37,7 @@ Class UserChatRoomsController extends Controller{
         ], $response['status']);
     }
 
-    public function update(UserChatRoomsRequest $request, $id)
+    public function update(ApiUserChatRoomsRequest $request, $id)
     {
         $response = $this->repo->updateData($id, $request);
         return response()->json([

@@ -26,7 +26,8 @@ class UserRepository
             $requestData['role_id'] = $parent->id;
            
 
-            User::create($requestData);
+            $user=User::create($requestData);
+            $token = $user->createToken('API Token')->plainTextToken;
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -36,7 +37,8 @@ class UserRepository
         }
         return [
             'status' => $status,
-            'message' => $message
+            'message' => $message,
+            'token' =>  $token
         ];
     }
 

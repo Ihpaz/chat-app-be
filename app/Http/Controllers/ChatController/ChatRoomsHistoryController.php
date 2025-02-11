@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\AuthController;
+namespace App\Http\Controllers\ChatController;
 
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
 use App\Models\Auth\ChatRoomsHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Http\Request\Chat\ApiChatRoomsHistoryRequest;
 
 Class ChatRoomsHistoryController extends Controller{
 
@@ -25,7 +26,7 @@ Class ChatRoomsHistoryController extends Controller{
         return ChatRoomsHistoryResource::collection($data);
     }
 
-    public function store(ChatRoomsHistoryRequest $request)
+    public function store(ApiChatRoomsHistoryRequest $request)
     {
 
         $response = $this->repo->saveData($request);
@@ -34,7 +35,7 @@ Class ChatRoomsHistoryController extends Controller{
         ], $response['status']);
     }
 
-    public function update(ChatRoomsHistoryRequest $request, $id)
+    public function update(ApiChatRoomsHistoryRequest $request, $id)
     {
         $response = $this->repo->updateData($id, $request);
         return response()->json([

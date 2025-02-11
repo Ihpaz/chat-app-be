@@ -10,6 +10,6 @@ use App\Http\Controllers\Auth\AuthController;
 Route::post('login', [AuthController::class, 'login']);
 Route::get('me', [AuthController::class, 'refresh']);
 Route::post('logout', [AuthController::class, 'logout']);
+Route::post('register', [AuthController::class, 'register']);
 
-Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+Route::get('/auth/google_login', [GoogleAuthController::class, 'handleGoogleLogin']);

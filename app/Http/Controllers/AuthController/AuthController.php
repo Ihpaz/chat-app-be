@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Http\Request\Auth\ApiLoginRequest;
+use App\Http\Request\Auth\ApiRegisterUserRequest;
+
 
 Class AuthController extends Controller{
     protected $repo;
@@ -16,13 +19,8 @@ Class AuthController extends Controller{
         $this->repo = new UserRepository();
     }
 
-    public function login(Request $request)
+    public function login(ApiLoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
 
         $identityType = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
@@ -74,5 +72,13 @@ Class AuthController extends Controller{
                 'type' => 'bearer',
             ]
         ]);
+    }
+
+    public function register(ApiRegisterUserRequest $request){
+        $response = $this->repo->saveData($request);
+        return response()->json([
+            'message' => $response['message'],
+            'toke' => $response['token']
+        ], $response['status']);
     }
 }
