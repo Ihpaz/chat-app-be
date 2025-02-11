@@ -8,15 +8,16 @@ use App\Models\Auth\UserChatRooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Request\Chat\ApiGoogleLoginRequest;
-
-
+use App\Services\FcmService;
 
 Class UserChatRoomsController extends Controller{
 
     protected $repo;
+    protected $fcm;
     public function __construct()
     {
         $this->repo = new UserChatRoomsReporitory();
+        $this->fcm = new FcmService();
     }
 
     public function index(Request $request)
@@ -28,18 +29,29 @@ Class UserChatRoomsController extends Controller{
         return UserChatRoomsResource::collection($data);
     }
 
-    public function store(ApiUserChatRoomsRequest $request)
+    public function join(ApiUserChatRoomsRequest $request)
     {
+        $response = $this->repo->join($request);
 
-        $response = $this->repo->saveData($request);
+        $this->fcm->topic =$request->topic;
+        $this->fcm->title ='New user Join';
+        $this->fcm->body ='New user join in Topic ='.$request->topic;
+        $this->fcm->sendToTopic();
+
         return response()->json([
             'message' => $response['message'],
         ], $response['status']);
     }
 
-    public function update(ApiUserChatRoomsRequest $request, $id)
+    public function logout(ApiUserChatRoomsRequest $request, $id)
     {
-        $response = $this->repo->updateData($id, $request);
+        $response = $this->repo->logout($id, $request);
+        
+        $this->fcm->topic =$request->topic;
+        $this->fcm->title ='User Logout';
+        $this->fcm->body ='User Logout in Topic ='.$request->topic;
+        $this->fcm->sendToTopic();
+
         return response()->json([
             'message' => $response['message']
         ], $response['status']);

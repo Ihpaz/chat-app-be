@@ -12,13 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class UserUserChatRoomsRepository
 {
-    public function saveData(Request $request)
+    public function join(Request $request)
     {
         $status = 200;
         $message = 'Success';
         try {
             DB::beginTransaction();
             $requestData = $request->all();
+            $requestData['user_id']= Auth::guard('api')->user()->id;
+            $requestData['is_active'] = true;
             $requestData['uuid'] =  Str::uuid()->toString();
 
             UserChatRooms::create($requestData);
@@ -35,16 +37,18 @@ class UserUserChatRoomsRepository
         ];
     }
 
-    public function updateData(Request $request)
+    public function logout(Request $request)
     {
         $status = 200;
         $message = 'Success';
         try {
             DB::beginTransaction();
-            $requestData = $request->all();
-            $requestData['uuid'] =  Str::uuid()->toString();
-            
-            UserChatRooms::where('uuid', $id)->update($requestData);
+            $requestData['is_active'] = false;
+            $userId=Auth::guard('api')->user()->id;
+
+            UserChatRooms::where('user_id', $userId)
+            ->where('chat_room_id',$request->chat_room_id)
+            ->update($requestData);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

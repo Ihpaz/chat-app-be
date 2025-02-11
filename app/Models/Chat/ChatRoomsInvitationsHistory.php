@@ -5,7 +5,7 @@ namespace App\Models\Chat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
-class ChatRooms extends Model
+class ChatRoomsInvitationsHistory extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -16,10 +16,11 @@ class ChatRooms extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'chat_room_id',
+        'sender_id',
+        'target_id',
         'uuid',
-        'topic',
-        'created_by'
+        'is_accepted',
     ];
 
     /**
@@ -41,13 +42,8 @@ class ChatRooms extends Model
         ];
     }
 
-    public function chat_user_history()
+    public function user()
     {
-        return $this->hasMany(ChatRoomsHistory::class, 'chat_room_id');
-    }
-
-    public function chat_rooms_user()
-    {
-        return $this->hasMany(UserChatRooms::class, 'chat_room_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

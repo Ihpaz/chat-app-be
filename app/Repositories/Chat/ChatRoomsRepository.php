@@ -20,7 +20,8 @@ class ChatRoomsRepository
             DB::beginTransaction();
             $requestData = $request->all();
             $requestData['uuid'] =  Str::uuid()->toString();
-
+            $requestData['created_by'] = Auth::guard('api')->user()->id;
+            
             ChatRooms::create($requestData);
 
             DB::commit();
@@ -43,7 +44,7 @@ class ChatRoomsRepository
             DB::beginTransaction();
             $requestData = $request->all();
             $requestData['uuid'] =  Str::uuid()->toString();
-            
+
             ChatRooms::where('uuid', $id)->update($requestData);
             DB::commit();
         } catch (\Throwable $th) {
