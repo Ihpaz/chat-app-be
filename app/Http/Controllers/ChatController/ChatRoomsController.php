@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Http\Controllers\AuthController;
+
+use App\Http\Controllers\Controller;
+use App\Models\Auth\User;
+use App\Models\Auth\ChatRooms;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+Class ChatRoomsController extends Controller{
+
+    protected $repo;
+    public function __construct()
+    {
+        $this->repo = new ChatRoomsReporitory();
+    }
+
+    public function index(Request $request)
+    {
+        $data = ChatRooms::relations($request)
+            ->filter($request)
+            ->order($request)
+            ->page($request);
+        return ChatRoomsResource::collection($data);
+    }
+
+    public function store(ChatRoomsRequest $request)
+    {
+
+        $response = $this->repo->saveData($request);
+        return response()->json([
+            'message' => $response['message'],
+        ], $response['status']);
+    }
+
+    public function update(ChatRoomsRequest $request, $id)
+    {
+        $response = $this->repo->updateData($id, $request);
+        return response()->json([
+            'message' => $response['message']
+        ], $response['status']);
+    }
+
+    public function show($id, Request $request)
+    {
+        return response()->json([
+            'data' => new ChatRoomsResource(ChatRooms::relations($request)->where('uuid', $id)->firstOrFail())
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $response = $this->repo->deleteData($id);
+        return response()->json([
+            'message' => $response['message']
+        ], $response['status']);
+    }
+}

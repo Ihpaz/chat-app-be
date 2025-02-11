@@ -18,6 +18,7 @@ class ChatRooms extends Model
     protected $fillable = [
         'name',
         'uuid',
+        'topic'
     ];
 
     /**
@@ -43,7 +44,7 @@ class ChatRooms extends Model
     {
         return $this->hasMany(ChatRoomsHistory::class, 'chat_room_id');
     }
-    
+
     public function chat_rooms_user()
     {
         return $this->hasMany(UserChatRooms::class, 'chat_room_id');
