@@ -21,6 +21,7 @@ Class ChatRoomsController extends Controller{
     public function index(Request $request)
     {
         $data = ChatRooms::relations($request)
+            ->withCount('chat_rooms_user')
             ->filter($request)
             ->order($request)
             ->page($request);
