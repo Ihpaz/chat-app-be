@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
-use App\Models\Auth\ChatRooms;
+use App\Models\Chat\ChatRooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 

@@ -4,6 +4,8 @@ namespace App\Models\Chat;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Auth\User;
+use Illuminate\Database\Eloquent\Model;
 
 class ChatRoomsInvitationsHistory extends Model
 {

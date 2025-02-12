@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Chat\UserChatRooms;
 use App\Models\Chat\ChatRoomsHistory;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {

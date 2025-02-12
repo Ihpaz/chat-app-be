@@ -8,6 +8,7 @@ class FcmService {
     private $baseUrl='https://www.googleapis.com/auth/firebase.messaging';
     private $projectId;
     private $accessToken;
+    
     public $title;
     public $body;
     public $token;

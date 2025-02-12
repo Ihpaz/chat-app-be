@@ -1,32 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\AuthController;
 
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Request\Auth\ApiGoogleLoginRequest;
-
+use App\Repositories\Auth\UserRepository;
+use Illuminate\Support\Facades\Http;
+use App\Http\Resources\Auth\UserResource;
 
 class GoogleAuthController extends Controller
 {
-    protected $repo;
-    public function __construct()
-    {
-        $this->repo = new UserRepository();
-    }
+   
 
-    public function handleGoogleLogin(ApiGoogleLoginRequest $request)
+    public function handleGoogleLogin(Request $request)
     {
         try {
            
-            $code = $request->input('code');
-            $googleUser = Socialite::driver('google')->stateless()->userFromToken($code);
+
+            $googleUser = Socialite::driver('google')->stateless()->userFromToken($request->access_token);
             $user = User::where('email', $googleUser->getEmail())->first();
-    
-            if (!$user) {
+           
+            if (!$user) {       
                 return response()->json([
                     'needs_nickname' => true,
                     'name' => $googleUser->getName(),
@@ -38,40 +35,19 @@ class GoogleAuthController extends Controller
     
             
             $token = $user->createToken('API Token')->plainTextToken;
-    
-            return response()->json(['token' => $token, 'user' => $user]);
+            return response()->json([
+                'status' => 'success',
+                'user' =>  new UserResource($user),
+                'authorisation' => [
+                    'token' => $token,
+                    'type' => 'bearer',
+                ]
+            ]);
+
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Authentication failed'], 401);
+            return response()->json(['error' => $e], 401);
         }
     }
     
 
-    // Handle Google callback
-    // public function handleGoogleCallback(Request $request)
-    // {
-    //     try {
-    //         $googleUser = Socialite::driver('google')->stateless()->user();
-
-    //         $user = User::where('email',$googleUser->getEmail())->fisrt();
-
-    //         $payload['name']= $googleUser->getName();
-    //         $payload['email']= $googleUser->getEmail();
-    //         $payload['avatar']= $googleUser->getEmail();
-
-    //         if(!$user){
-    //             $user = $this->repo->saveData($payload);
-    //         }
-          
-    //         // Generate Sanctum token
-    //         $token = $user->createToken('API Token')->plainTextToken;
-
-    //         return response()->json([
-    //             'token' => $token,
-    //             'user' => $user
-    //         ]);
-
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Authentication failed'], 401);
-    //     }
-    // }
 }

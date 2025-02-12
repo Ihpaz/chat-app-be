@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Http\Request\Auth\ApiLoginRequest;
-use App\Http\Request\Auth\ApiRegisterUserRequest;
-
+use App\Repositories\Auth\UserRepository;
+use App\Http\Requests\Auth\ApiRegisterUserRequest;
+use App\Http\Resources\Auth\UserResource;
 
 Class AuthController extends Controller{
     protected $repo;
@@ -61,24 +61,24 @@ Class AuthController extends Controller{
     public function refresh()
     {
         $user = Auth::guard('api')->user()->load('role');
-        $menu = $this->getMenu($user);
 
         return response()->json([
             'status' => 'success',
             'user' =>
             new UserResource($user),
             'authorisation' => [
-                'token' => Auth::guard('api')->refresh(),
+                'token' => request()->bearerToken(),
                 'type' => 'bearer',
-            ]
+            ]   
         ]);
     }
 
     public function register(ApiRegisterUserRequest $request){
         $response = $this->repo->saveData($request);
+      
         return response()->json([
             'message' => $response['message'],
-            'toke' => $response['token']
+            'token' => $response['token']
         ], $response['status']);
     }
 }

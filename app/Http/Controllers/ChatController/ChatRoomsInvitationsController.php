@@ -24,9 +24,9 @@ Class ChatRoomsInvitationsController extends Controller{
     {
 
         $response = $this->repo->send($request);
+        $token = User::where('uuid', $request->target_id)->value('fcm_token');
 
-  
-        $this->fcm->topic =$request->topic;
+        $this->fcm->token = $token;
         $this->fcm->title ='New Invitation';
         $this->fcm->body ='New Invitation from'.$request->user_id;
         $this->fcm->id = $response['uuid'];
@@ -40,10 +40,13 @@ Class ChatRoomsInvitationsController extends Controller{
     public function answer(ApiChatRoomsAnsweredRequest $request, $id)
     {
         $response = $this->repo->answer($id, $request);
+        $token = ChatRoomsInvitations::where('chat_rooms_invitations.uuid', $id)
+                ->join('users', 'users.id', '=', 'chat_rooms_invitations.sender_id')
+                ->value('users.fcm_token');
 
-        $this->fcm->topic =$request->topic;
+        $this->fcm->token = $token;
         $this->fcm->title ='Invitation Answered';
-        $this->fcm->body ='Invitation Answered'.$request->topic;
+        $this->fcm->body ='Invitation Answered';
         $this->fcm->sendToTopic();
 
         return response()->json([

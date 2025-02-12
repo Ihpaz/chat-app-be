@@ -7,7 +7,6 @@ use App\Models\Auth\User;
 use App\Models\Auth\UserChatRooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Http\Request\Chat\ApiGoogleLoginRequest;
 use App\Services\FcmService;
 
 Class UserChatRoomsController extends Controller{
