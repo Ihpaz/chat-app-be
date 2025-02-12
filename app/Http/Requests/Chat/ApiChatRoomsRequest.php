@@ -17,6 +17,7 @@ class ApiChatRoomsRequest extends FormRequest
     {
         return [
             "name" => ['required','string'],
+            "user_ids" => ['required'],
         ];
     }
 }

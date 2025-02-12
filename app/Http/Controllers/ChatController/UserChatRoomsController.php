@@ -8,6 +8,7 @@ use App\Models\Auth\UserChatRooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Services\FcmService;
+use App\Http\Requests\Chat\ApiUserChatRoomsRequest;
 
 Class UserChatRoomsController extends Controller{
 
@@ -15,7 +16,7 @@ Class UserChatRoomsController extends Controller{
     protected $fcm;
     public function __construct()
     {
-        $this->repo = new UserChatRoomsReporitory();
+        $this->repo = new UserChatRoomsRepository();
         $this->fcm = new FcmService();
     }
 

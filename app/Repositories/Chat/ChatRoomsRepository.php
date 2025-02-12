@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Auth\User;
 use App\Models\Chat\ChatRooms;
+use App\Models\Chat\UserChatRooms;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +23,25 @@ class ChatRoomsRepository
             $requestData['uuid'] =  Str::uuid()->toString();
             $requestData['created_by'] = Auth::guard('api')->user()->id;
             
-            ChatRooms::create($requestData);
+            $ChatRooms=ChatRooms::create($requestData);
+            $chat_room_id =$ChatRooms->id;
+
+            $users_chat_rooms = array_map(function($user_id) use ($chat_room_id) {
+                return [
+                    'user_id' => $user_id,
+                    'chat_room_id' => $chat_room_id,
+                    'is_active' => false
+                ];
+            }, $request->user_ids);
+
+            $my_user=[
+                'user_id' => Auth::guard('api')->user()->id,
+                'chat_room_id' => $chat_room_id,
+                'is_active' => true
+            ];
+            array_push($users_chat_rooms,$my_user);
+
+            UserChatRooms::insert($users_chat_rooms);
 
             DB::commit();
         } catch (\Throwable $th) {

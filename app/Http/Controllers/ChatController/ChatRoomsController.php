@@ -7,14 +7,15 @@ use App\Models\Auth\User;
 use App\Models\Auth\ChatRooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Http\Request\Chat\ApiChatRoomsRequest;
+use App\Http\Requests\Chat\ApiChatRoomsRequest;
+use App\Repositories\Chat\ChatRoomsRepository;
 
 Class ChatRoomsController extends Controller{
 
     protected $repo;
     public function __construct()
     {
-        $this->repo = new ChatRoomsReporitory();
+        $this->repo = new ChatRoomsRepository();
     }
 
     public function index(Request $request)

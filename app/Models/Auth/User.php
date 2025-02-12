@@ -9,11 +9,12 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Chat\UserChatRooms;
 use App\Models\Chat\ChatRoomsHistory;
 use Laravel\Sanctum\HasApiTokens;
+use App\Services\Model\HasUserModel;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens,HasUserModel;
 
     /**
      * The attributes that are mass assignable.
