@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Services\FcmService;
 use App\Http\Requests\Chat\ApiUserChatRoomsRequest;
+use App\Repositories\Chat\UserChatRoomsRepository;
 
 Class UserChatRoomsController extends Controller{
 
@@ -33,10 +34,10 @@ Class UserChatRoomsController extends Controller{
     {
         $response = $this->repo->join($request);
 
-        $this->fcm->topic =$request->topic;
-        $this->fcm->title ='New user Join';
-        $this->fcm->body ='New user join in Topic ='.$request->topic;
-        $this->fcm->sendToTopic();
+        // $this->fcm->topic =$request->topic;
+        // $this->fcm->title ='New user Join';
+        // $this->fcm->body ='New user join in Topic ='.$request->topic;
+        // $this->fcm->sendToTopic();
 
         return response()->json([
             'message' => $response['message'],

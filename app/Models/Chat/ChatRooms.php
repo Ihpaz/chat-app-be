@@ -5,11 +5,12 @@ namespace App\Models\Chat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\Model\HasUserModel;
 
 class ChatRooms extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable,HasUserModel;
 
     /**
      * The attributes that are mass assignable.
@@ -17,6 +18,7 @@ class ChatRooms extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'id',
         'name',
         'uuid',
         'topic',

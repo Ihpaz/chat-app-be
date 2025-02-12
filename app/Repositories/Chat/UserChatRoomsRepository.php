@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class UserUserChatRoomsRepository
+class UserChatRoomsRepository
 {
     public function join(Request $request)
     {
@@ -20,10 +20,22 @@ class UserUserChatRoomsRepository
             DB::beginTransaction();
             $requestData = $request->all();
             $requestData['user_id']= Auth::guard('api')->user()->id;
-            $requestData['is_active'] = true;
-            $requestData['uuid'] =  Str::uuid()->toString();
 
-            UserChatRooms::create($requestData);
+            $userChatRooms = UserChatRooms::where('user_id',$requestData['user_id'])
+                            ->where('chat_room_id',$requestData['chat_room_id'])
+                            ->first();
+                         
+            $requestData['is_active'] = true;
+
+            if(!$userChatRooms){
+                $requestData['uuid'] =  Str::uuid()->toString();
+                UserChatRooms::create($requestData);
+            }else{
+                $updateData['is_active'] = true;
+                UserChatRooms::where('id',  $userChatRooms->id)
+                ->update($updateData);
+            }
+           
 
             DB::commit();
         } catch (\Throwable $th) {

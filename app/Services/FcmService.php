@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Services;
+
 use Google\Client;
 use Google\Service\FirebaseCloudMessaging;
 use Illuminate\Support\Facades\Http;
@@ -25,7 +27,7 @@ class FcmService {
       
          $client = new Client();
          $client->setAuthConfig($firebaseCredentialsPath);
-         $client->addScope($this->$base_url);
+         $client->addScope($this->baseUrl);
  
         
          if ($client->isAccessTokenExpired()) {

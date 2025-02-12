@@ -11,7 +11,7 @@ class ChatRoomsHistory extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
+    protected $table = 'chat_rooms_history';
     /**
      * The attributes that are mass assignable.
      *

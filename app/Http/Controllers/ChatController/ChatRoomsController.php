@@ -4,11 +4,14 @@ namespace App\Http\Controllers\ChatController;
 
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
-use App\Models\Auth\ChatRooms;
+use App\Models\Chat\ChatRooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Requests\Chat\ApiChatRoomsRequest;
 use App\Repositories\Chat\ChatRoomsRepository;
+use App\Http\Resources\Chat\ChatRoomsResource;
+use Illuminate\Support\Facades\Auth;
+
 
 Class ChatRoomsController extends Controller{
 
@@ -21,11 +24,53 @@ Class ChatRoomsController extends Controller{
     public function index(Request $request)
     {
         $data = ChatRooms::relations($request)
-            ->withCount('chat_rooms_user')
             ->filter($request)
             ->order($request)
             ->page($request);
+
         return ChatRoomsResource::collection($data);
+    }
+
+    public function joinChatRooms(){
+       
+        $data = ChatRooms::leftJoin('user_chat_rooms', function ($join) {
+            $join->on('chat_rooms.id', '=', 'user_chat_rooms.chat_room_id')
+                 ->where('user_chat_rooms.user_id', Auth::id())
+                 ->where('user_chat_rooms.is_active', true);
+        })
+        ->whereNull('user_chat_rooms.user_id') 
+        ->get('chat_rooms.*');
+
+        return ChatRoomsResource::collection($data);
+    }
+
+    public function activeChatRooms(){
+       
+        $data = ChatRooms::leftJoin('user_chat_rooms', function ($join) {
+            $join->on('chat_rooms.id', '=', 'user_chat_rooms.chat_room_id')
+                 ->where('user_chat_rooms.user_id', Auth::id())
+                 ->where('user_chat_rooms.is_active', true);
+        })
+        ->whereNotNull('user_chat_rooms.user_id') 
+        ->get('chat_rooms.*');
+
+        return ChatRoomsResource::collection($data);
+    }
+
+    public function activeChatRoomsCount(){
+       
+        $data = ChatRooms::leftJoin('user_chat_rooms', function ($join) {
+            $join->on('chat_rooms.id', '=', 'user_chat_rooms.chat_room_id')
+                 ->where('user_chat_rooms.user_id', Auth::id())
+                 ->where('user_chat_rooms.is_active', true);
+        })
+        ->whereNotNull('user_chat_rooms.user_id') 
+        ->count();
+
+        return response()->json([
+            'message' => 'ok',
+            'data' => $data
+        ], 200);
     }
 
     public function store(ApiChatRoomsRequest $request)

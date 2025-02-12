@@ -16,7 +16,7 @@ class ApiUserChatRoomsRequest extends FormRequest
     public function rules()
     {
         return [
-            "chat_rooms_id" => ['required'],
+            "chat_room_id" => ['required'],
         ];
     }
 }
