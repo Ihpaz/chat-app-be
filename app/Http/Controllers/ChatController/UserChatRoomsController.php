@@ -44,14 +44,14 @@ Class UserChatRoomsController extends Controller{
         ], $response['status']);
     }
 
-    public function logout(ApiUserChatRoomsRequest $request, $id)
+    public function logout(ApiUserChatRoomsRequest $request)
     {
-        $response = $this->repo->logout($id, $request);
+        $response = $this->repo->logout($request);
         
-        $this->fcm->topic =$request->topic;
-        $this->fcm->title ='User Logout';
-        $this->fcm->body ='User Logout in Topic ='.$request->topic;
-        $this->fcm->sendToTopic();
+        // $this->fcm->topic =$request->topic;
+        // $this->fcm->title ='User Logout';
+        // $this->fcm->body ='User Logout in Topic ='.$request->topic;
+        // $this->fcm->sendToTopic();
 
         return response()->json([
             'message' => $response['message']

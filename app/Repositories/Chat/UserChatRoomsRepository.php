@@ -61,6 +61,7 @@ class UserChatRoomsRepository
             UserChatRooms::where('user_id', $userId)
             ->where('chat_room_id',$request->chat_room_id)
             ->update($requestData);
+            
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

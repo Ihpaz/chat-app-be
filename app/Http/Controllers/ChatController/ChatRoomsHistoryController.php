@@ -7,8 +7,9 @@ use App\Models\Auth\User;
 use App\Models\Auth\ChatRoomsHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Http\Request\Chat\ApiChatRoomsHistoryRequest;
+use App\Http\Requests\Chat\ApiChatRoomsHistoryRequest;
 use App\Services\FcmService;
+use App\Repositories\Chat\ChatRoomsHistoryRepository;
 
 Class ChatRoomsHistoryController extends Controller{
 
@@ -16,7 +17,7 @@ Class ChatRoomsHistoryController extends Controller{
     protected $fcm;
     public function __construct()
     {
-        $this->repo = new ChatRoomsHistoryReporitory();
+        $this->repo = new ChatRoomsHistoryRepository();
         $this->fcm = new FcmService();
     }
 
@@ -35,10 +36,10 @@ Class ChatRoomsHistoryController extends Controller{
         $response = $this->repo->saveData($request);
 
   
-        $this->fcm->topic =$request->topic;
-        $this->fcm->title ='New Message';
-        $this->fcm->body ='New Message in Topic ='.$request->topic;
-        $this->fcm->sendToTopic();
+        // $this->fcm->topic =$request->topic;
+        // $this->fcm->title ='New Message';
+        // $this->fcm->body ='New Message in Topic ='.$request->topic;
+        // $this->fcm->sendToTopic();
 
         return response()->json([
             'message' => $response['message'],

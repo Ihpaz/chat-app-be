@@ -17,8 +17,8 @@ class ApiChatRoomsHistoryRequest extends FormRequest
     {
         return [
             "message" => ['required','string'],
-            "chat_rooms_id" => ['required'],
-            "topic" => ['required'],
+            "chat_room_id" => ['required'],
+            // "topic" => ['required'],
         ];
     }
 }

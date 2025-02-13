@@ -92,8 +92,16 @@ Class ChatRoomsController extends Controller{
 
     public function show($id, Request $request)
     {
+        $data = ChatRooms::with(['chat_rooms_user' => function ($q) {
+                    $q->with(['user']);
+                }])
+                ->with(['chat_user_history' => function ($q) {
+                    $q->with(['user']);
+                }])
+                ->where('uuid', $id)->firstOrFail();
+                
         return response()->json([
-            'data' => new ChatRoomsResource(ChatRooms::relations($request)->where('uuid', $id)->firstOrFail())
+            'data' => new ChatRoomsResource($data)
         ]);
     }
 
