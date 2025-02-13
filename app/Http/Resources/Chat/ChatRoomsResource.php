@@ -17,7 +17,7 @@ class ChatRoomsResource extends JsonResource
             "id" => $this->id,
             "uuid" => $this->uuid,
             "name" => $this->name,
-            "topic" => $this->email, 
+            "topic" => $this->topic, 
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             "user_chat_rooms" =>  UserChatRoomsResource::collection($this->whenLoaded("chat_rooms_user")),

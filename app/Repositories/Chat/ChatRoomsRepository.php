@@ -22,6 +22,7 @@ class ChatRoomsRepository
             $requestData = $request->all();
             $requestData['uuid'] =  Str::uuid()->toString();
             $requestData['created_by'] = Auth::guard('api')->user()->id;
+            $requestData['topic'] = $request->name;
             
             $ChatRooms=ChatRooms::create($requestData);
             $chat_room_id =$ChatRooms->id;

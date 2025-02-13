@@ -11,14 +11,17 @@ use App\Http\Requests\Chat\ApiChatRoomsRequest;
 use App\Repositories\Chat\ChatRoomsRepository;
 use App\Http\Resources\Chat\ChatRoomsResource;
 use Illuminate\Support\Facades\Auth;
+use App\Services\FcmService;
 
 
 Class ChatRoomsController extends Controller{
 
     protected $repo;
+    protected $fcm;
     public function __construct()
     {
         $this->repo = new ChatRoomsRepository();
+        $this->fcm = new FcmService();
     }
 
     public function index(Request $request)
@@ -77,6 +80,9 @@ Class ChatRoomsController extends Controller{
     {
 
         $response = $this->repo->saveData($request);
+      
+        
+        
         return response()->json([
             'message' => $response['message'],
         ], $response['status']);
@@ -99,7 +105,7 @@ Class ChatRoomsController extends Controller{
                     $q->with(['user']);
                 }])
                 ->where('uuid', $id)->firstOrFail();
-                
+
         return response()->json([
             'data' => new ChatRoomsResource($data)
         ]);

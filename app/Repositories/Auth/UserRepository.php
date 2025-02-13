@@ -48,5 +48,26 @@ class UserRepository
        
     }
 
+    public function updateData($id,Request $request)
+    {
+        $status = 200;
+        $message = 'Success';
+        try {
+            DB::beginTransaction();
+            $requestData = $request->all();
+
+            User::where('id', $id)->update($requestData);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            $status = 500;
+            $message = $th->getMessage();
+        }
+        return [
+            'status' => $status,
+            'message' => $message
+        ];
+    }
+
   
 }

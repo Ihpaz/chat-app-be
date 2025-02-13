@@ -19,7 +19,7 @@ class FcmService {
     public $topic;
 
     public function __construct(){
-        $firebaseCredentialsPath = storage_path('app/private/chat-app-cb803-firebase-adminsdk-fbsvc-23caf005f8.json');
+        $firebaseCredentialsPath = storage_path(env('FIREBASE_CREDENTIALS'));
 
         if (!file_exists($firebaseCredentialsPath)) {
             return response()->json(['error' => 'Firebase credentials file not found'], 500);
@@ -39,31 +39,35 @@ class FcmService {
          $this->projectId = json_decode(file_get_contents($firebaseCredentialsPath), true)['project_id'];
     }
 
-    public function sendToToken(){
+    public function sendToToken($tokens){
        
          $url = "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send";
  
-       
-         $payload = [
-             'message' => [
-                 'token' => $this->tokens, 
-                 'notification' => [
-                     'title' => $this->title,
-                     'body' => $this->body,
-                 ],
-                 'data' => [
-                     'url' => $this->url,
-                     'id' => $this->id,
-                 ],
-             ]
-         ];
- 
-         // Send request to FCM
-         $response =Http::withHeaders([
-             'Authorization' => "Bearer {$this->accessToken}",
-             'Content-Type' => 'application/json',
-         ])->post($url, $payload);
-
+         foreach ($tokens as $token) {
+            $payload = [
+                'message' => [
+                    'token' =>$token, 
+                    'notification' => [
+                        'title' => $this->title,
+                        'body' => $this->body,
+                    ],
+                    'data' => [
+                        'url' => $this->url,
+                        'id' => $this->id,
+                    ],
+                ]
+            ];
+    
+            // Send request to FCM
+            $response =Http::withHeaders([
+                'Authorization' => "Bearer {$this->accessToken}",
+                'Content-Type' => 'application/json',
+            ])->post($url, $payload);
+         }
+         return response()->json([
+            'message' => 'Message sent ',
+            'response' => $response->json(),
+        ]);
     }
 
     public function sendToTopic(){
@@ -84,13 +88,15 @@ class FcmService {
         ];
 
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->accessToken,
+            'Authorization' => 'Bearer '. $this->accessToken,
             'Content-Type' => 'application/json',
         ])->post($url, $data);
 
+      
         return response()->json([
             'message' => 'Notification sent to topic: ' . $this->topic,
             'response' => $response->json(),
         ]);
     }
+
 }

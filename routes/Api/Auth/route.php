@@ -13,4 +13,4 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api')
 Route::post('register', [AuthController::class, 'register']);
 
 Route::post('google_login', [GoogleAuthController::class, 'handleGoogleLogin']);
-Route::resource('user', UserController::class, ['only' => ['index']])->middleware('auth:api');
+Route::resource('user', UserController::class, ['only' => ['index','update']])->middleware('auth:api');
