@@ -22,6 +22,7 @@ class UserChatRooms extends Model
         'user_id',
         'uuid',
         'is_active',
+        'is_rejected'
     ];
 
     /**

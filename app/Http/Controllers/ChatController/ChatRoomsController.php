@@ -80,11 +80,18 @@ Class ChatRoomsController extends Controller{
     {
 
         $response = $this->repo->saveData($request);
-      
-        
+        $fcmTokens =User::whereIn('id',$request->user_ids)->pluck('fcm_token');
+
+     
+        $this->fcm->title ='invitation';
+        $this->fcm->body ='Please Join to Chat Room'.$request->name;
+        $this->fcm->url =(string)$response['id'];
+        $this->fcm->id =(string)$response['uuid'];
+        $this->fcm->sendToToken($fcmTokens);
         
         return response()->json([
             'message' => $response['message'],
+            'uuid' => $response['uuid']
         ], $response['status']);
     }
 

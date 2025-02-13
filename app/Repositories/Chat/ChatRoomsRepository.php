@@ -17,6 +17,8 @@ class ChatRoomsRepository
     {
         $status = 200;
         $message = 'Success';
+        $chat_room_id=null;
+        $chat_room_uuid=null;
         try {
             DB::beginTransaction();
             $requestData = $request->all();
@@ -26,6 +28,7 @@ class ChatRoomsRepository
             
             $ChatRooms=ChatRooms::create($requestData);
             $chat_room_id =$ChatRooms->id;
+            $chat_room_uuid =$ChatRooms->uuid;
 
             $users_chat_rooms = array_map(function($user_id) use ($chat_room_id) {
                 return [
@@ -52,11 +55,13 @@ class ChatRoomsRepository
         }
         return [
             'status' => $status,
-            'message' => $message
+            'message' => $message,
+            'id' => $chat_room_id,
+            'uuid' => $chat_room_uuid
         ];
     }
 
-    public function updateData(Request $request)
+    public function updateData($id,Request $request)
     {
         $status = 200;
         $message = 'Success';

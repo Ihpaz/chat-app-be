@@ -13,7 +13,7 @@ use App\Http\Requests\Chat\ApiChatRoomsHistoryRequest;
 use App\Services\FcmService;
 use App\Repositories\Chat\ChatRoomsHistoryRepository;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Resources\Chat\ChatRoomsHistoryResource;
 Class ChatRoomsHistoryController extends Controller{
 
     protected $repo;
@@ -38,7 +38,7 @@ Class ChatRoomsHistoryController extends Controller{
         try{
 
         
-        $response = $this->repo->saveData($request);
+        $this->repo->saveData($request);
         $fcmTokens =User::whereIn('id', function ($query) use ($request) {
                         $query->select('user_id')
                             ->from('user_chat_rooms')
@@ -50,11 +50,9 @@ Class ChatRoomsHistoryController extends Controller{
 
         $this->fcm->title ='chat'.$request->name;
         $this->fcm->body ='New Message in Chat Room '.$request->name;
-        return $this->fcm->sendToToken($fcmTokens);
+        $this->fcm->insertToFirestore($request->name);
+        return $this->fcm->sendToToken($fcmTokens,$request->name);
 
-        // return response()->json([
-        //     'message' => $response['message'],
-        // ], $response['status']);
         } catch (\Throwable $th) {
               return response()->json([
                 'message' => $th->getMessage(),
@@ -74,12 +72,6 @@ Class ChatRoomsHistoryController extends Controller{
     public function destroy($id)
     {
         $response = $this->repo->deleteData($id);
-
-        $this->fcm->topic =$request->topic;
-        $this->fcm->title ='Deleted Message';
-        $this->fcm->body ='Deleted Message in Topic ='.$request->topic;
-        $this->fcm->sendToTopic();
-
         return response()->json([
             'message' => $response['message']
         ], $response['status']);

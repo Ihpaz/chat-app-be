@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Google\Client;
 use Google\Service\FirebaseCloudMessaging;
+use Google\Cloud\Firestore\FirestoreClient;
 use Illuminate\Support\Facades\Http;
 
 class FcmService {
@@ -17,6 +18,8 @@ class FcmService {
     public $url = '';
     public $id = '';
     public $topic;
+
+    private $firestore; // Firestore client
 
     public function __construct(){
         $firebaseCredentialsPath = storage_path(env('FIREBASE_CREDENTIALS'));
@@ -37,12 +40,17 @@ class FcmService {
  
          
          $this->projectId = json_decode(file_get_contents($firebaseCredentialsPath), true)['project_id'];
+         $this->firestore = new FirestoreClient([
+            'projectId' => $this->projectId,
+            'keyFilePath' => $firebaseCredentialsPath,
+        ]);
     }
 
     public function sendToToken($tokens){
        
          $url = "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send";
- 
+        
+
          foreach ($tokens as $token) {
             $payload = [
                 'message' => [
@@ -59,17 +67,23 @@ class FcmService {
             ];
     
             // Send request to FCM
-            $response =Http::withHeaders([
+            $response[] =Http::withHeaders([
                 'Authorization' => "Bearer {$this->accessToken}",
                 'Content-Type' => 'application/json',
             ])->post($url, $payload);
+
+            // sleep(1); // 500 milliseconds (0.5 seconds) delay
          }
+       
+
          return response()->json([
             'message' => 'Message sent ',
-            'response' => $response->json(),
+            'response' => count($response),
         ]);
     }
 
+
+    //depreciated
     public function sendToTopic(){
         $url = "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send";
 
@@ -99,4 +113,17 @@ class FcmService {
         ]);
     }
 
+    public function insertToFirestore($room) {
+        $collection = $this->firestore->collection('fcm_messages');
+        
+        $document = $collection->add([
+            'room' =>$room,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return $document->id(); // Return document ID if needed
+    }
+
+
+   
 }

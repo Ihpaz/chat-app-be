@@ -61,6 +61,58 @@ class UserChatRoomsRepository
             UserChatRooms::where('user_id', $userId)
             ->where('chat_room_id',$request->chat_room_id)
             ->update($requestData);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            $status = 500;
+            $message = $th->getMessage();
+        }
+        return [
+            'status' => $status,
+            'message' => $message
+        ];
+    }
+
+    public function accept(Request $request)
+    {
+        $status = 200;
+        $message = 'Success';
+        try {
+            DB::beginTransaction();
+            $requestData['is_active'] = true;
+            $userId=Auth::guard('api')->user()->id;
+
+            UserChatRooms::where('user_id', $userId)
+            ->where('chat_room_id',$request->chat_room_id)
+            ->update($requestData);
+            
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            $status = 500;
+            $message = $th->getMessage();
+        }
+        return [
+            'status' => $status,
+            'message' => $message
+        ];
+    }
+
+
+    public function reject(Request $request)
+    {
+        $status = 200;
+        $message = 'Success';
+        try {
+            DB::beginTransaction();
+            $requestData['is_active'] = false;
+            $requestData['is_rejected'] = true;
+            $userId=Auth::guard('api')->user()->id;
+
+            UserChatRooms::where('user_id', $userId)
+            ->where('chat_room_id',$request->chat_room_id)
+            ->update($requestData);
             
             DB::commit();
         } catch (\Throwable $th) {
