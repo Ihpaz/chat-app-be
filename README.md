@@ -3,3 +3,7 @@ Run Composer install
 - create database mysql chat_app
 - restrore file sql
 - php artisan serve
+
+User Admin
+email : ihfazm2@gmail.com
+pass : password123
