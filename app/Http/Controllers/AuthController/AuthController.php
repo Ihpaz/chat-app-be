@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Repositories\Auth\UserRepository;
 use App\Http\Requests\Auth\ApiRegisterUserRequest;
 use App\Http\Resources\Auth\UserResource;
+use App\Http\Requests\Auth\ApiLoginRequest;
 
 Class AuthController extends Controller{
     protected $repo;
@@ -28,25 +29,24 @@ Class AuthController extends Controller{
             $identityType => $request->email,
             'password' => $request->input('password'),
         ];
-        $token = Auth::guard('api')->attempt($credentials);
-
-        if (!$token) {
+        if( Auth::attempt($credentials)){
+                $user = Auth::user()->load('role');
+                $token = $user->createToken('auth_token')->plainTextToken;
+                return response()->json([
+                    'status' => 'success',
+                    'user' =>  new UserResource($user),
+                    'authorisation' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ]
+                ]);
+        }else{
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized',
             ], 401);
         }
-
-        $user = Auth::guard('api')->user()->load('role');
-
-        return response()->json([
-            'status' => 'success',
-            'user' =>  new UserResource($user),
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
-        ]);
+      
     }
 
     public function logout(request $request)

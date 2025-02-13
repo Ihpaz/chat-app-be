@@ -22,9 +22,7 @@ class ApiLoginRequest extends FormRequest
                 "email",
             ],
             "password" => [
-                $id ? 'nullable' : "required",
-                "min:8", // minimal 8 karakter
-                "regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/", // minimal 1 huruf kecil, 1 huruf besar, dan 1 angka
+                "required"
             ]
         ];
     }
